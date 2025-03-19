@@ -1,0 +1,141 @@
+loophole: placing A,B at nth or 26th position in matrix rowise and ith postion columwise, sort help alot, 
+
+Each string in votes represents a ranking order given by a voter. The first character has the highest rank, the second has the second-highest rank, and so on.
+
+For example:
+
+votes = {"ABC", "ACB", "BCA"}
+
+Each character represents a team:
+
+"ABC": A is preferred over B, B over C.
+
+"ACB": A over C, C over B.
+
+"BCA": B over C, C over A.
+
+
+The function aims to determine the overall ranking by prioritizing:
+
+1. Higher vote counts for a better position.
+
+
+2. Lexicographical order as a tiebreaker.
+
+
+
+
+---
+
+Step-by-Step Breakdown
+
+Step 1: Initialize a Count Matrix
+
+vector<vector<int>> count(26, vector<int>(27));
+
+Creates a 26 x 27 matrix (count).
+
+count[i] stores vote counts for team i (where i = 'A' - 'Z').
+
+count[i][j] represents how many times team i was voted at position j.
+
+count[i][26] stores the team’s character for sorting.
+
+
+Step 2: Assign Team Letters to the Count Matrix
+
+for (char& c: votes[0])
+    count[c - 'A'][26] = c;
+
+The first vote list determines the participating teams.
+
+Example for "ABC":
+
+count['A' - 'A'][26] = 'A'
+count['B' - 'A'][26] = 'B'
+count['C' - 'A'][26] = 'C'
+
+
+Step 3: Count the Votes
+
+for (string& vote: votes)
+    for (int i = 0; i < vote.length(); ++i)
+        --count[vote[i] - 'A'][i];
+
+The ranking is stored as negative values for easier sorting (since we want a higher rank to be preferred).
+
+The negative count helps when sorting because lower values will be placed first.
+
+
+Example After Processing Votes: | Team | 1st Place | 2nd Place | 3rd Place | Letter | |------|----------|----------|----------|--------| | A    | -2       | -1       | -0       | 'A'    | | B    | -1       | -1       | -1       | 'B'    | | C    | -0       | -1       | -2       | 'C'    |
+
+Step 4: Sort the Count Matrix
+
+sort(count.begin(), count.end());
+
+Since the votes are stored as negative numbers, sorting ensures that the team with the most 1st place votes comes first, then 2nd place votes, and so on.
+
+If votes are equal, lexicographical order (team letter) acts as a tiebreaker.
+
+
+Step 5: Construct the Result String
+
+string res;
+for (int i = 0; i < votes[0].length(); ++i)
+    res += count[i][26];
+
+The first N sorted teams (where N = votes[0].length()) are used to build the result string.
+
+
+
+---
+
+Visualization with Example Input
+
+votes = {"ABC", "ACB", "BCA"}
+
+Initial Count Matrix
+
+A: [ 0, 0, 0, ..., 'A' ]
+B: [ 0, 0, 0, ..., 'B' ]
+C: [ 0, 0, 0, ..., 'C' ]
+
+After Counting Votes
+
+A: [-2, -1,  0, ..., 'A']  // 2 first places, 1 second place
+B: [-1, -1, -1, ..., 'B']  // 1 first, 1 second, 1 third
+C: [ 0, -1, -2, ..., 'C']  // 1 second, 2 third places
+
+After Sorting
+
+A: [-2, -1,  0, ..., 'A']
+B: [-1, -1, -1, ..., 'B']
+C: [ 0, -1, -2, ..., 'C']
+
+Final Output
+
+res = "ACB"
+
+Complexity Analysis
+
+Counting votes:  (where  is the number of votes,  is the number of teams).
+
+Sorting: .
+
+Overall Complexity: , which is efficient.
+
+
+
+---
+
+Summary
+
+Stores rankings as negative values for easier sorting.
+
+Uses sorting to prioritize higher votes and lexicographical order.
+
+Extracts the top teams in ranked order to construct the result string.
+
+
+
+
