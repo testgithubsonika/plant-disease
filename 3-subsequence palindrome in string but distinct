@@ -1,0 +1,41 @@
+class Solution {
+public:
+    int countPalindromicSubsequence(string s) {
+
+        unordered_set<char> letters;
+// considering every char for start and end then again next char as for start and end ...
+        for (char c : s) {
+            letters.insert(c);
+        }
+        
+        int ans = 0;
+// this for loop till end
+        for (char letter : letters) {
+
+//after one char process update I and j for next.when u want to update no global declaration;
+            int i = -1;
+            int j = 0;
+            
+            for (int k = 0; k < s.size(); k++) {
+                if (s[k] == letter) {
+                    if (i == -1) {
+                        i = k;
+                    }
+             
+                    j = k;
+                }
+            } 
+// i, j get start and end after loop
+            
+            unordered_set<char> between;
+            for (int k = i + 1; k < j; k++) {
+                between.insert(s[k]);
+            }
+            
+            ans += between.size();
+        }
+        
+        return ans;
+    }
+};
+
